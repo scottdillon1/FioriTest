@@ -1,0 +1,81 @@
+_schema-version: "3.2"
+ID: FioriFreeStyle
+version: 0.0.1
+modules:
+- name: FioriFreeStyle-destination-content
+  type: com.sap.application.content
+  requires:
+  - name: uaa_FioriFreeStyle
+    parameters:
+      service-key:
+        name: uaa_FioriFreeStyle-key
+  - name: FioriFreeStyle_html_repo_host
+    parameters:
+      service-key:
+        name: FioriFreeStyle_html_repo_host-key
+  - name: FioriFreeStyle-destination-service
+    parameters:
+      content-target: true
+  parameters:
+    content:
+      subaccount:
+        destinations:
+        - Name: managed_fioriservice_FioriFreeStyle_html_repo_host
+          ServiceInstanceName: FioriFreeStyle-html5-app-host-service
+          ServiceKeyName: FioriFreeStyle_html_repo_host-key
+          sap.cloud.service: managed.fioriservice
+        - Authentication: OAuth2UserTokenExchange
+          Name: managed_fioriservice_uaa_FioriFreeStyle
+          ServiceInstanceName: FioriFreeStyle-xsuaa-service
+          ServiceKeyName: uaa_FioriFreeStyle-key
+          sap.cloud.service: managed.fioriservice
+        existing_destinations_policy: update
+  build-parameters:
+    no-source: true
+- name: FioriFreeStyle_ui_deployer
+  type: com.sap.application.content
+  path: .
+  requires:
+  - name: FioriFreeStyle_html_repo_host
+    parameters:
+      content-target: true
+  build-parameters:
+    build-result: resources
+    requires:
+    - artifacts:
+      - HTML5Module-content.zip
+      name: HTML5Module
+      target-path: resources/
+- name: HTML5Module
+  type: html5
+  path: HTML5Module
+  build-parameters:
+    builder: custom
+    commands:
+    - npm run build
+    supported-platforms: []
+resources:
+- name: FioriFreeStyle-destination-service
+  type: org.cloudfoundry.managed-service
+  parameters:
+    service: destination
+    service-name: FioriFreeStyle-destination-service
+    service-plan: lite
+- name: FioriFreeStyle_html_repo_host
+  type: org.cloudfoundry.managed-service
+  parameters:
+    service: html5-apps-repo
+    service-name: FioriFreeStyle-html5-app-host-service
+    service-plan: app-host
+- name: uaa_FioriFreeStyle
+  type: org.cloudfoundry.managed-service
+  parameters:
+    path: ./xs-security.json
+    service: xsuaa
+    service-name: FioriFreeStyle-xsuaa-service
+    service-plan: application
+build-parameters:
+  before-all:
+  - builder: custom
+    commands:
+    - npm install

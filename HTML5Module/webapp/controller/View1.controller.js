@@ -13,3 +13,4 @@ sap.ui.define([
 			}
 		});
 	});
+// Add from Stefan

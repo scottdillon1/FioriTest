@@ -4,7 +4,7 @@
 			<pages>
 				<Page id="page" title="{i18n>title}">
 					<content>
-					    <Button xmlns="sap.m" text="Hello PCAT Team...most amazing team ever" id="button0"/>
+					    <Button xmlns="sap.m" text="Hello PCAT Team...most amazing team ever 2" id="button0"/>
 					</content>
 				</Page>
 			</pages>
